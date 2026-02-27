@@ -61,6 +61,7 @@ export default function AIPerformancePage() {
   return (
     <div>
       <Navbar />
+      <div className="md:pl-64">
       <main className="w-full px-4 py-6 lg:px-8">
         <section className="panel-hero mb-6">
           <p className="chip mb-3">Max Rep AI Coach</p>
@@ -309,6 +310,7 @@ export default function AIPerformancePage() {
           </>
         ) : null}
       </main>
+      </div>
     </div>
   );
 }

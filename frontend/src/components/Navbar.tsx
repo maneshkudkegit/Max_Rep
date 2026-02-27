@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 import { logoutAction } from '../features/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -25,6 +25,16 @@ export function Navbar() {
     );
   }
 
+  const desktopLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `rounded-xl px-3 py-2 transition-colors ${
+      isActive ? 'bg-slate-900 text-white' : 'hover:bg-slate-100 text-slate-700'
+    }`;
+
+  const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `rounded-full px-3 py-1 text-xs font-semibold ${
+      isActive ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700'
+    }`;
+
   return (
     <>
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-slate-200 bg-white/95 p-4 backdrop-blur md:flex md:flex-col">
@@ -33,14 +43,17 @@ export function Navbar() {
           Max Rep
         </Link>
         <nav className="flex flex-1 flex-col gap-1 text-sm font-semibold text-slate-700">
-          <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" to="/dashboard">Dashboard</Link>
-          <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" to="/ai-performance">AI Coach</Link>
-          <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" to="/meals">Meals</Link>
-          <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" to="/workouts">Workouts</Link>
-          <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" to="/analytics">Analytics</Link>
-          <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" to="/profile">Profile</Link>
+          <NavLink className={desktopLinkClass} to="/dashboard">Dashboard</NavLink>
+          <NavLink className={desktopLinkClass} to="/ai-performance">AI Coach</NavLink>
+          <NavLink className={desktopLinkClass} to="/meals">Meals</NavLink>
+          <NavLink className={desktopLinkClass} to="/workouts">Workouts</NavLink>
+          <NavLink className={desktopLinkClass} to="/analytics">Analytics</NavLink>
+          <NavLink className={desktopLinkClass} to="/profile">Profile</NavLink>
           {user.role === 'gym_admin' || user.role === 'superadmin' ? (
-            <Link className="rounded-xl px-3 py-2 hover:bg-slate-100" to="/admin">Admin</Link>
+            <NavLink className={desktopLinkClass} to="/admin">Admin</NavLink>
+          ) : null}
+          {user.role === 'superadmin' ? (
+            <NavLink className={desktopLinkClass} to="/superadmin">SuperAdmin</NavLink>
           ) : null}
         </nav>
         <button
@@ -68,14 +81,17 @@ export function Navbar() {
           </button>
         </div>
         <div className="mt-2 flex gap-2 overflow-x-auto">
-          <Link className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700" to="/dashboard">Dashboard</Link>
-          <Link className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700" to="/ai-performance">AI Coach</Link>
-          <Link className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700" to="/meals">Meals</Link>
-          <Link className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700" to="/workouts">Workouts</Link>
-          <Link className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700" to="/analytics">Analytics</Link>
-          <Link className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700" to="/profile">Profile</Link>
+          <NavLink className={mobileLinkClass} to="/dashboard">Dashboard</NavLink>
+          <NavLink className={mobileLinkClass} to="/ai-performance">AI Coach</NavLink>
+          <NavLink className={mobileLinkClass} to="/meals">Meals</NavLink>
+          <NavLink className={mobileLinkClass} to="/workouts">Workouts</NavLink>
+          <NavLink className={mobileLinkClass} to="/analytics">Analytics</NavLink>
+          <NavLink className={mobileLinkClass} to="/profile">Profile</NavLink>
           {user.role === 'gym_admin' || user.role === 'superadmin' ? (
-            <Link className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700" to="/admin">Admin</Link>
+            <NavLink className={mobileLinkClass} to="/admin">Admin</NavLink>
+          ) : null}
+          {user.role === 'superadmin' ? (
+            <NavLink className={mobileLinkClass} to="/superadmin">SuperAdmin</NavLink>
           ) : null}
         </div>
       </header>

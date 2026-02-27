@@ -36,6 +36,7 @@ export default function ProfilePage() {
   return (
     <div>
       <Navbar />
+      <div className="md:pl-64">
       <main className="mx-auto max-w-xl px-4 py-8">
         <h1 className="mb-2 text-2xl font-black">Profile Management</h1>
         <p className="mb-4 text-xs text-slate-500">{dirty ? 'You have unsaved changes.' : 'All changes saved.'}</p>
@@ -50,6 +51,7 @@ export default function ProfilePage() {
           <button className="btn-primary">Update</button>
         </form>
       </main>
+      </div>
     </div>
   );
 }

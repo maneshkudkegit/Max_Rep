@@ -41,6 +41,7 @@ export default function AnalyticsPage() {
   return (
     <div>
       <Navbar />
+      <div className="md:pl-64">
       <main className="mx-auto max-w-7xl px-4 py-8">
         <div className="panel-hero mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -71,6 +72,7 @@ export default function AnalyticsPage() {
 
         <AnalyticsChart data={active} title={period === 'weekly' ? 'Weekly performance' : 'Monthly performance'} />
       </main>
+      </div>
     </div>
   );
 }

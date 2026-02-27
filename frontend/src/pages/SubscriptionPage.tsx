@@ -29,6 +29,7 @@ export default function SubscriptionPage() {
   return (
     <div>
       <Navbar />
+      <div className="md:pl-64">
       <main className="mx-auto max-w-6xl px-4 py-8">
         <h1 className="mb-2 text-3xl font-black">Choose your Max Rep plan</h1>
         <p className="mb-4 text-sm text-slate-600">Select a tier to continue to secure checkout.</p>
@@ -46,6 +47,7 @@ export default function SubscriptionPage() {
         </div>
         <button className="mt-5 text-sm underline" onClick={() => navigate('/dashboard')}>Back to dashboard</button>
       </main>
+      </div>
     </div>
   );
 }

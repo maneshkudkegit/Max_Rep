@@ -27,6 +27,7 @@ export default function SuperAdminPage() {
   return (
     <div>
       <Navbar />
+      <div className="md:pl-64">
       <main className="mx-auto max-w-6xl px-4 py-8">
         <h1 className="mb-4 text-3xl font-bold">SuperAdmin Console</h1>
         <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -39,6 +40,7 @@ export default function SuperAdminPage() {
           <ul className="space-y-1 text-sm">{tenants.map((t) => <li key={t.id}>{t.name} ({t.slug})</li>)}</ul>
         </div>
       </main>
+      </div>
     </div>
   );
 }

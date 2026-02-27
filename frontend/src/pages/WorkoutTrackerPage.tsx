@@ -156,6 +156,7 @@ export default function WorkoutTrackerPage() {
   return (
     <div>
       <Navbar />
+      <div className="md:pl-64">
       <main className="w-full px-4 py-8 lg:px-8">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-2xl font-black text-left">Workout + Hydration Tracker</h1>
@@ -256,6 +257,7 @@ export default function WorkoutTrackerPage() {
           <button className="btn-primary mt-3">Save</button>
         </form>
       </main>
+      </div>
     </div>
   );
 }
