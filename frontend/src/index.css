@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Manrope:wght@400;500;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --surface: #f4efe7;
+  --text-primary: #1f2933;
+  --brand-grad: linear-gradient(135deg, #b65c2d 0%, #d08a45 42%, #1f6f78 100%);
+}
+
+body {
+  @apply text-slate-900;
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at 8% 0%, rgba(182, 92, 45, 0.18), transparent 34%),
+    radial-gradient(circle at 100% 40%, rgba(31, 111, 120, 0.16), transparent 34%), var(--surface);
+  color: var(--text-primary);
+}
+
+.gradient-bg {
+  background: radial-gradient(circle at 30% 20%, rgba(208, 138, 69, 0.24), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(31, 111, 120, 0.22), transparent 35%),
+    linear-gradient(120deg, #1d2b36 0%, #264653 100%);
+}
+
+.app-surface {
+  background: radial-gradient(circle at 10% 0%, rgba(208, 138, 69, 0.18), transparent 30%),
+    radial-gradient(circle at 100% 30%, rgba(31, 111, 120, 0.15), transparent 30%),
+    linear-gradient(180deg, #faf6ef 0%, #f0ece4 100%);
+}
+
+@layer components {
+  .main-with-sidebar {
+    @apply w-full px-4 py-6 lg:px-8;
+  }
+
+  @screen md {
+    .main-with-sidebar {
+      margin-left: 16rem;
+    }
+  }
+
+  .panel {
+    @apply rounded-2xl border border-slate-200/80 bg-white/90 p-5 shadow-card backdrop-blur;
+  }
+
+  .panel-hero {
+    @apply rounded-3xl border border-slate-200/80 bg-white/95 p-6 shadow-card backdrop-blur;
+    background-image: radial-gradient(circle at top right, rgba(31, 111, 120, 0.16), transparent 35%),
+      radial-gradient(circle at left bottom, rgba(182, 92, 45, 0.14), transparent 35%);
+  }
+
+  .panel-glass {
+    @apply rounded-2xl border border-white/20 bg-white/10 p-6 shadow-card backdrop-blur-xl;
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-slate-700;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-bold text-white shadow-card transition hover:-translate-y-0.5;
+    background: var(--brand-grad);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-100;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-accent focus:ring-2 focus:ring-amber-100;
+  }
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Space Grotesk', 'Manrope', sans-serif;
+}
