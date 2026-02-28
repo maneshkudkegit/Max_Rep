@@ -1,66 +1,61 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
 import { AnalyticsChart } from '../components/AnalyticsChart';
 import { Navbar } from '../components/Navbar';
 import { StatCard } from '../components/StatCard';
 import { api } from '../lib/api';
-import type { AnalyticsPoint } from '../types';
+import { useAppSelector } from '../store/hooks';
+import type { AdvancedAnalysis, AnalyticsPoint } from '../types';
 
 export default function AnalyticsPage() {
-  const [weekly, setWeekly] = useState<AnalyticsPoint[]>([]);
-  const [monthly, setMonthly] = useState<AnalyticsPoint[]>([]);
-  const [period, setPeriod] = useState<'weekly' | 'monthly'>('weekly');
+  const user = useAppSelector((s) => s.auth.user);
+  const [series, setSeries] = useState<AnalyticsPoint[]>([]);
+  const [advanced, setAdvanced] = useState<AdvancedAnalysis | null>(null);
+  const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('weekly');
 
   useEffect(() => {
     void (async () => {
-      const [w, m] = await Promise.all([
-        api.get('/tracking/analytics/weekly'),
-        api.get('/tracking/analytics/monthly'),
-      ]);
-      setWeekly(w.data);
-      setMonthly(m.data);
+      const res = await api.get(`/tracking/analytics?period=${period}`);
+      setSeries(res.data);
+      if (period !== 'yearly') {
+        const adv = await api.get<AdvancedAnalysis>(`/tracking/advanced-analysis?period=${period}`);
+        setAdvanced(adv.data);
+      } else {
+        setAdvanced(null);
+      }
     })();
-  }, []);
-
-  const active = period === 'weekly' ? weekly : monthly;
+  }, [period]);
 
   const summary = useMemo(() => {
-    if (active.length === 0) {
+    if (series.length === 0) {
       return { avgConsistency: 0, avgCalories: 0, avgWater: 0 };
     }
-    const totalConsistency = active.reduce((sum, p) => sum + p.consistency_score, 0);
-    const totalCalories = active.reduce((sum, p) => sum + p.calories_consumed, 0);
-    const totalWater = active.reduce((sum, p) => sum + p.water_ml, 0);
+    const totalConsistency = series.reduce((sum, p) => sum + p.consistency_score, 0);
+    const totalCalories = series.reduce((sum, p) => sum + p.calories_consumed, 0);
+    const totalWater = series.reduce((sum, p) => sum + p.water_ml, 0);
     return {
-      avgConsistency: Math.round((totalConsistency / active.length) * 100) / 100,
-      avgCalories: Math.round((totalCalories / active.length) * 100) / 100,
-      avgWater: Math.round((totalWater / active.length) * 100) / 100,
+      avgConsistency: Math.round((totalConsistency / series.length) * 100) / 100,
+      avgCalories: Math.round((totalCalories / series.length) * 100) / 100,
+      avgWater: Math.round((totalWater / series.length) * 100) / 100,
     };
-  }, [active]);
+  }, [series]);
 
   return (
     <div>
       <Navbar />
-      <div className="md:pl-64">
-      <main className="mx-auto max-w-7xl px-4 py-8">
+      <div className="md:pl-0">
+      <main className="main-with-sidebar">
         <div className="panel-hero mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="chip mb-2">Data intelligence</p>
             <h1 className="text-3xl font-black">Progress Analytics</h1>
           </div>
           <div className="flex rounded-xl border border-slate-200 bg-white p-1">
-            <button
-              className={`rounded px-3 py-1 text-sm ${period === 'weekly' ? 'bg-brand text-white' : 'text-slate-600'}`}
-              onClick={() => setPeriod('weekly')}
-            >
-              Weekly
-            </button>
-            <button
-              className={`rounded px-3 py-1 text-sm ${period === 'monthly' ? 'bg-brand text-white' : 'text-slate-600'}`}
-              onClick={() => setPeriod('monthly')}
-            >
-              Monthly
-            </button>
+            {(['daily', 'weekly', 'monthly', 'yearly'] as const).map((p) => (
+              <button key={p} className={`rounded px-3 py-1 text-sm ${period === p ? 'bg-brand text-white' : 'text-slate-600'}`} onClick={() => setPeriod(p)}>
+                {p}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -70,9 +65,29 @@ export default function AnalyticsPage() {
           <StatCard title="Average Water (ml)" value={summary.avgWater} hint={period} />
         </div>
 
-        <AnalyticsChart data={active} title={period === 'weekly' ? 'Weekly performance' : 'Monthly performance'} />
+        <AnalyticsChart data={series} title={`${period[0].toUpperCase()}${period.slice(1)} performance`} />
+
+        {advanced ? (
+          <section className="panel mt-4">
+            <h2 className="text-xl font-black">Advanced Analysis</h2>
+            <p className="mt-1 text-xs text-slate-500">
+              Last updated: {advanced.last_updated_at ? new Date(advanced.last_updated_at).toLocaleString() : 'No update yet'}
+              {' | '}
+              Last recorded date: {advanced.last_recorded_date ?? 'No records'}
+            </p>
+            <ul className="mt-3 space-y-2 text-sm">
+              {advanced.suggestions.map((item) => (
+                <li key={item} className="rounded-xl bg-slate-50 p-3">
+                  {user?.full_name ? `${user.full_name}, ` : ''}{item}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
       </main>
       </div>
     </div>
   );
 }
+
+

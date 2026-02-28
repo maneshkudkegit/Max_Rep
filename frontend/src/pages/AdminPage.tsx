@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { Navbar } from '../components/Navbar';
 import { api } from '../lib/api';
@@ -27,8 +27,8 @@ export default function AdminPage() {
   return (
     <div>
       <Navbar />
-      <div className="md:pl-64">
-      <main className="mx-auto max-w-7xl px-4 py-8">
+      <div className="md:pl-0">
+      <main className="main-with-sidebar">
         <div className="panel-hero mb-4 flex items-center justify-between">
           <h1 className="text-3xl font-black">Gym Admin Panel</h1>
           <select className="input-field w-auto" value={tier} onChange={(e) => setTier(e.target.value)}>
@@ -67,3 +67,5 @@ export default function AdminPage() {
     </div>
   );
 }
+
+

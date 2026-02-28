@@ -13,6 +13,7 @@ from app.models.notification import Notification  # noqa: F401
 from app.models.pdf_report import PdfReport  # noqa: F401
 from app.models.subscription import Subscription, SubscriptionFeature  # noqa: F401
 from app.models.tenant import Tenant  # noqa: F401
+from app.models.tracking_log import CustomFoodItem, MealLog, WorkoutLog  # noqa: F401
 from app.models.trainer_chat import TrainerMessage, TrainerThread  # noqa: F401
 from app.models.user import User  # noqa: F401
 

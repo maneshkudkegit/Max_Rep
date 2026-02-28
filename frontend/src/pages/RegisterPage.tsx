@@ -21,13 +21,6 @@ export default function RegisterPage() {
     full_name: '',
     email: '',
     password: '',
-    age: 25,
-    gender: 'male',
-    height_cm: 175,
-    weight_kg: 75,
-    activity_level: 'moderate',
-    goal: 'fat_loss',
-    current_phase: 'beginner',
   });
 
   const canSubmit = useMemo(() => {
@@ -61,9 +54,7 @@ export default function RegisterPage() {
       <main className="mx-auto max-w-4xl px-4 py-10">
         <section className="panel-hero mb-6">
           <h1 className="mb-2 text-3xl font-black text-slate-900">Create Max Rep Account</h1>
-          <p className="text-sm text-slate-600">
-            One-time onboarding collects your fitness baseline and auto-generates your gym slug.
-          </p>
+          <p className="text-sm text-slate-600">Quick registration. You can complete profile details in Settings after login.</p>
         </section>
 
         <form onSubmit={submit} className="panel grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -86,24 +77,6 @@ export default function RegisterPage() {
           <label className="text-sm md:col-span-2">
             <span className="mb-1 block font-medium">Password</span>
             <input className="input-field" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
-          </label>
-
-          <label className="text-sm"><span className="mb-1 block font-medium">Age</span><input className="input-field" type="number" value={form.age} onChange={(e) => setForm({ ...form, age: Number(e.target.value) })} /></label>
-          <label className="text-sm"><span className="mb-1 block font-medium">Gender</span><select className="input-field" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}><option value="male">male</option><option value="female">female</option></select></label>
-          <label className="text-sm"><span className="mb-1 block font-medium">Height (cm)</span><input className="input-field" type="number" value={form.height_cm} onChange={(e) => setForm({ ...form, height_cm: Number(e.target.value) })} /></label>
-          <label className="text-sm"><span className="mb-1 block font-medium">Weight (kg)</span><input className="input-field" type="number" value={form.weight_kg} onChange={(e) => setForm({ ...form, weight_kg: Number(e.target.value) })} /></label>
-          <label className="text-sm"><span className="mb-1 block font-medium">Activity</span><select className="input-field" value={form.activity_level} onChange={(e) => setForm({ ...form, activity_level: e.target.value })}><option value="sedentary">sedentary</option><option value="light">light</option><option value="moderate">moderate</option><option value="active">active</option><option value="very_active">very_active</option></select></label>
-          <label className="text-sm"><span className="mb-1 block font-medium">Goal</span><select className="input-field" value={form.goal} onChange={(e) => setForm({ ...form, goal: e.target.value })}><option value="fat_loss">fat_loss</option><option value="muscle_gain">muscle_gain</option></select></label>
-          <label className="text-sm md:col-span-2">
-            <span className="mb-1 block font-medium">What are you currently going through?</span>
-            <select className="input-field" value={form.current_phase} onChange={(e) => setForm({ ...form, current_phase: e.target.value })}>
-              <option value="beginner">beginner</option>
-              <option value="muscle_building">muscle_building</option>
-              <option value="weight_plateau">weight_plateau</option>
-              <option value="recovery_phase">recovery_phase</option>
-              <option value="busy_lifestyle">busy_lifestyle</option>
-              <option value="transformation_challenge">transformation_challenge</option>
-            </select>
           </label>
 
           {error ? <p className="rounded bg-red-50 p-2 text-xs text-red-600 md:col-span-2">{error}</p> : null}

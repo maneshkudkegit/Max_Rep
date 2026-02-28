@@ -27,7 +27,7 @@ from app.models.membership import Membership
 from app.models.subscription import Subscription, SubscriptionStatus, SubscriptionTier
 from app.models.tenant import Tenant
 from app.models.user import User
-from app.schemas.auth import AuthUserResponse, LoginRequest, MessageResponse, RegisterRequest
+from app.schemas.auth import AuthUserResponse, LoginRequest, MessageResponse, ProfileResponse, ProfileUpdateRequest, RegisterRequest
 from app.services.fitness_engine import (
     ACTIVITY_FACTORS,
     bmi,
@@ -42,6 +42,19 @@ from app.models.fitness import FitnessProfile
 
 
 router = APIRouter(prefix='/auth', tags=['auth'])
+
+
+def _profile_completion_tips(user: User) -> list[str]:
+    tips: list[str] = []
+    if not user.photo_url:
+        tips.append('Add a profile photo in Settings.')
+    if not user.weekday_sleep_hours:
+        tips.append('Set your weekday sleep hours in Settings.')
+    if not user.weekend_sleep_hours:
+        tips.append('Set your weekend sleep hours in Settings.')
+    if user.height_cm <= 0 or user.weight_kg <= 0:
+        tips.append('Update your current height and weight in Settings.')
+    return tips
 
 
 def _slugify(value: str) -> str:
@@ -107,6 +120,7 @@ def register(payload: RegisterRequest, response: Response, db: Session = Depends
         activity_level=payload.activity_level,
         goal=payload.goal,
         current_phase=payload.current_phase,
+        last_login_at=datetime.now(timezone.utc),
     )
     db.add(user)
     db.flush()
@@ -150,6 +164,7 @@ def register(payload: RegisterRequest, response: Response, db: Session = Depends
         tenant_slug=tenant.slug,
         role=MembershipRole.GYM_ADMIN.value,
         tier=SubscriptionTier.FREE.value,
+        profile_completion_tips=_profile_completion_tips(user),
     )
 
 
@@ -160,6 +175,7 @@ def login(payload: LoginRequest, response: Response, db: Session = Depends(get_d
         raise HTTPException(status_code=401, detail='Invalid credentials')
     if not verify_password(payload.password, user.password_hash):
         raise HTTPException(status_code=401, detail='Invalid credentials')
+    user.last_login_at = datetime.now(timezone.utc)
 
     tenant: Tenant | None = None
     if payload.tenant_slug:
@@ -193,6 +209,7 @@ def login(payload: LoginRequest, response: Response, db: Session = Depends(get_d
         tenant_slug=tenant.slug,
         role=membership.role,
         tier=tier,
+        profile_completion_tips=_profile_completion_tips(user),
     )
 
 
@@ -265,4 +282,63 @@ def me(payload: dict = Depends(get_current_auth_payload), db: Session = Depends(
         tenant_slug=tenant.slug,
         role=membership.role,
         tier=payload.get('tier', 'free'),
+        profile_completion_tips=_profile_completion_tips(user),
+    )
+
+
+@router.get('/profile', response_model=ProfileResponse)
+def profile(payload: dict = Depends(get_current_auth_payload), db: Session = Depends(get_db)):
+    user = db.get(User, int(payload['sub']))
+    return ProfileResponse(
+        id=user.id,
+        full_name=user.full_name,
+        email=user.email,
+        age=user.age,
+        gender=user.gender,
+        height_cm=user.height_cm,
+        weight_kg=user.weight_kg,
+        photo_url=user.photo_url,
+        weekday_sleep_hours=user.weekday_sleep_hours,
+        weekend_sleep_hours=user.weekend_sleep_hours,
+        last_login_at=user.last_login_at.isoformat() if user.last_login_at else None,
+        profile_completion_tips=_profile_completion_tips(user),
+    )
+
+
+@router.put('/profile', response_model=ProfileResponse)
+def update_profile(
+    body: ProfileUpdateRequest,
+    payload: dict = Depends(get_current_auth_payload),
+    db: Session = Depends(get_db),
+):
+    user = db.get(User, int(payload['sub']))
+    if body.full_name is not None:
+        user.full_name = body.full_name
+    if body.age is not None:
+        user.age = body.age
+    if body.height_cm is not None:
+        user.height_cm = body.height_cm
+    if body.weight_kg is not None:
+        user.weight_kg = body.weight_kg
+    if body.photo_url is not None:
+        user.photo_url = body.photo_url.strip() or None
+    if body.weekday_sleep_hours is not None:
+        user.weekday_sleep_hours = body.weekday_sleep_hours
+    if body.weekend_sleep_hours is not None:
+        user.weekend_sleep_hours = body.weekend_sleep_hours
+    db.commit()
+    db.refresh(user)
+    return ProfileResponse(
+        id=user.id,
+        full_name=user.full_name,
+        email=user.email,
+        age=user.age,
+        gender=user.gender,
+        height_cm=user.height_cm,
+        weight_kg=user.weight_kg,
+        photo_url=user.photo_url,
+        weekday_sleep_hours=user.weekday_sleep_hours,
+        weekend_sleep_hours=user.weekend_sleep_hours,
+        last_login_at=user.last_login_at.isoformat() if user.last_login_at else None,
+        profile_completion_tips=_profile_completion_tips(user),
     )

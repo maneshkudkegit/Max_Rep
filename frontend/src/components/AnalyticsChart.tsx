@@ -1,4 +1,4 @@
-import { ResponsiveContainer, Line, LineChart, Tooltip, XAxis, YAxis, BarChart, Bar, CartesianGrid } from 'recharts';
+import { ResponsiveContainer, Line, LineChart, Tooltip, XAxis, YAxis, BarChart, Bar, CartesianGrid, Legend } from 'recharts';
 
 import type { AnalyticsPoint } from '../types';
 
@@ -13,7 +13,12 @@ export function AnalyticsChart({ data, title }: { data: AnalyticsPoint[]; title:
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
+            <Legend />
             <Line type="monotone" dataKey="consistency_score" stroke="#f43f5e" strokeWidth={3} />
+            <Line type="monotone" dataKey="calories_consumed" stroke="#22c55e" strokeWidth={2} />
+            <Line type="monotone" dataKey="protein_g" stroke="#b65c2d" strokeWidth={2} />
+            <Line type="monotone" dataKey="carbs_g" stroke="#0284c7" strokeWidth={2} />
+            <Line type="monotone" dataKey="fats_g" stroke="#6d28d9" strokeWidth={2} />
             <Line type="monotone" dataKey="water_ml" stroke="#0ea5e9" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
@@ -24,6 +29,7 @@ export function AnalyticsChart({ data, title }: { data: AnalyticsPoint[]; title:
             <YAxis />
             <Tooltip />
             <Bar dataKey="calories_consumed" fill="#22c55e" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="workout_minutes" fill="#f97316" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

@@ -5,40 +5,34 @@
 @tailwind utilities;
 
 :root {
-  --surface: #f4efe7;
-  --text-primary: #1f2933;
-  --brand-grad: linear-gradient(135deg, #b65c2d 0%, #d08a45 42%, #1f6f78 100%);
+  --surface: #e8f4f1;
+  --text-primary: #12222d;
+  --brand-grad: linear-gradient(135deg, #0f766e 0%, #14b8a6 48%, #f97316 100%);
 }
 
 body {
   @apply text-slate-900;
   font-family: 'Manrope', 'Segoe UI', sans-serif;
-  background: radial-gradient(circle at 8% 0%, rgba(182, 92, 45, 0.18), transparent 34%),
-    radial-gradient(circle at 100% 40%, rgba(31, 111, 120, 0.16), transparent 34%), var(--surface);
+  background: radial-gradient(circle at 10% 0%, rgba(15, 118, 110, 0.2), transparent 36%),
+    radial-gradient(circle at 100% 35%, rgba(249, 115, 22, 0.18), transparent 36%), var(--surface);
   color: var(--text-primary);
 }
 
 .gradient-bg {
-  background: radial-gradient(circle at 30% 20%, rgba(208, 138, 69, 0.24), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(31, 111, 120, 0.22), transparent 35%),
-    linear-gradient(120deg, #1d2b36 0%, #264653 100%);
+  background: radial-gradient(circle at 26% 20%, rgba(20, 184, 166, 0.22), transparent 40%),
+    radial-gradient(circle at 84% 72%, rgba(249, 115, 22, 0.22), transparent 35%),
+    linear-gradient(120deg, #123243 0%, #1d4d63 100%);
 }
 
 .app-surface {
-  background: radial-gradient(circle at 10% 0%, rgba(208, 138, 69, 0.18), transparent 30%),
-    radial-gradient(circle at 100% 30%, rgba(31, 111, 120, 0.15), transparent 30%),
-    linear-gradient(180deg, #faf6ef 0%, #f0ece4 100%);
+  background: radial-gradient(circle at 9% 0%, rgba(20, 184, 166, 0.18), transparent 30%),
+    radial-gradient(circle at 100% 28%, rgba(249, 115, 22, 0.17), transparent 30%),
+    linear-gradient(180deg, #f6fcfb 0%, #ebf6f4 100%);
 }
 
 @layer components {
   .main-with-sidebar {
-    @apply w-full px-4 py-6 lg:px-8;
-  }
-
-  @screen md {
-    .main-with-sidebar {
-      margin-left: 16rem;
-    }
+    @apply mx-auto w-full max-w-[88rem] px-5 py-8 lg:px-10;
   }
 
   .panel {

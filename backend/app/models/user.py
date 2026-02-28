@@ -22,6 +22,10 @@ class User(Base):
     activity_level: Mapped[ActivityLevel] = mapped_column(String(20), nullable=False)
     goal: Mapped[GoalType] = mapped_column(String(20), nullable=False)
     current_phase: Mapped[CurrentPhase] = mapped_column(String(40), nullable=False)
+    photo_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    weekday_sleep_hours: Mapped[float | None] = mapped_column(Float, nullable=True)
+    weekend_sleep_hours: Mapped[float | None] = mapped_column(Float, nullable=True)
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)

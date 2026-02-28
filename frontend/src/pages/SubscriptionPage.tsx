@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Navbar } from '../components/Navbar';
@@ -29,8 +29,8 @@ export default function SubscriptionPage() {
   return (
     <div>
       <Navbar />
-      <div className="md:pl-64">
-      <main className="mx-auto max-w-6xl px-4 py-8">
+      <div className="md:pl-0">
+      <main className="main-with-sidebar">
         <h1 className="mb-2 text-3xl font-black">Choose your Max Rep plan</h1>
         <p className="mb-4 text-sm text-slate-600">Select a tier to continue to secure checkout.</p>
         <SaveStatus status={status} successText="Redirecting to checkout..." savingText="Preparing checkout..." errorText="Unable to open checkout." />
@@ -51,3 +51,5 @@ export default function SubscriptionPage() {
     </div>
   );
 }
+
+

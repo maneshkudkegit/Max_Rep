@@ -10,7 +10,7 @@ import LandingPage from '../pages/LandingPage';
 import LoginPage from '../pages/LoginPage';
 import AIPerformancePage from '../pages/AIPerformancePage';
 import MealTrackerPage from '../pages/MealTrackerPage';
-import ProfilePage from '../pages/ProfilePage';
+import SettingsPage from '../pages/SettingsPage';
 import RegisterPage from '../pages/RegisterPage';
 import SubscriptionPage from '../pages/SubscriptionPage';
 import SuperAdminPage from '../pages/SuperAdminPage';
@@ -41,7 +41,8 @@ export const router = createBrowserRouter([
   { path: '/meals', element: <Protected><MealTrackerPage /></Protected> },
   { path: '/workouts', element: <Protected><WorkoutTrackerPage /></Protected> },
   { path: '/analytics', element: <Protected><AnalyticsPage /></Protected> },
-  { path: '/profile', element: <Protected><ProfilePage /></Protected> },
+  { path: '/settings', element: <Protected><SettingsPage /></Protected> },
+  { path: '/profile', element: <Protected><Navigate to="/settings" replace /></Protected> },
   { path: '/admin', element: <Protected><AdminPage /></Protected> },
   { path: '/superadmin', element: <Protected><SuperAdminPage /></Protected> },
 ]);

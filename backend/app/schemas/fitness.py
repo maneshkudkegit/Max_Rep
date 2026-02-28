@@ -1,3 +1,5 @@
+from datetime import date, datetime
+
 from pydantic import BaseModel, Field
 
 
@@ -40,6 +42,11 @@ class TrackingSummaryResponse(BaseModel):
     workout_completed: bool
     consistency_score: float
     streak_count: int
+    protein_g: float = 0
+    carbs_g: float = 0
+    fats_g: float = 0
+    last_updated_at: datetime | None = None
+    last_recorded_date: date | None = None
 
 
 class AnalyticsPoint(BaseModel):
@@ -47,6 +54,11 @@ class AnalyticsPoint(BaseModel):
     consistency_score: float
     calories_consumed: float
     water_ml: float
+    protein_g: float = 0
+    carbs_g: float = 0
+    fats_g: float = 0
+    workout_minutes: float = 0
+    workout_entries: int = 0
 
 
 class NotificationResponse(BaseModel):
@@ -154,3 +166,95 @@ class PerformanceAnalysisResponse(BaseModel):
     workout_report: WorkoutPerformanceReport
     hydration_report: HydrationReport
     dashboard: DailyPerformanceDashboard
+
+
+class CustomFoodRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=120)
+    unit: str = Field(default='serving', min_length=1, max_length=20)
+    calories_per_unit: float = Field(default=0, ge=0)
+    protein_per_unit: float = Field(default=0, ge=0)
+    carbs_per_unit: float = Field(default=0, ge=0)
+    fats_per_unit: float = Field(default=0, ge=0)
+
+
+class CustomFoodResponse(BaseModel):
+    id: int
+    name: str
+    unit: str
+    calories_per_unit: float
+    protein_per_unit: float
+    carbs_per_unit: float
+    fats_per_unit: float
+    created_at: datetime
+
+
+class MealLogRequest(BaseModel):
+    date: date
+    meal_type: str = Field(min_length=2, max_length=40)
+    food_name: str = Field(min_length=1, max_length=120)
+    quantity: float = Field(gt=0)
+    unit: str = Field(default='serving', min_length=1, max_length=20)
+    calories: float = Field(default=0, ge=0)
+    protein_g: float = Field(default=0, ge=0)
+    carbs_g: float = Field(default=0, ge=0)
+    fats_g: float = Field(default=0, ge=0)
+    source: str = Field(default='default', min_length=1, max_length=20)
+
+
+class MealLogResponse(BaseModel):
+    id: int
+    date: date
+    meal_type: str
+    food_name: str
+    quantity: float
+    unit: str
+    calories: float
+    protein_g: float
+    carbs_g: float
+    fats_g: float
+    source: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class WorkoutLogRequest(BaseModel):
+    date: date
+    category: str = Field(min_length=2, max_length=20)
+    name: str = Field(min_length=1, max_length=120)
+    sets: int | None = Field(default=None, ge=0, le=50)
+    reps: int | None = Field(default=None, ge=0, le=200)
+    duration_minutes: float | None = Field(default=None, ge=0, le=360)
+    calories_burned_kcal: float = Field(default=0, ge=0)
+    notes: str | None = Field(default=None, max_length=255)
+
+
+class WorkoutLogResponse(BaseModel):
+    id: int
+    date: date
+    category: str
+    name: str
+    sets: int | None
+    reps: int | None
+    duration_minutes: float | None
+    calories_burned_kcal: float
+    notes: str | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class AICoachIngredientRequest(BaseModel):
+    ingredients: list[str] = Field(min_length=1)
+
+
+class AICoachSuggestionResponse(BaseModel):
+    title: str
+    suggestions: list[str]
+    personalized_message: str
+
+
+class AdvancedAnalysisResponse(BaseModel):
+    period: str
+    last_updated_at: datetime | None
+    last_recorded_date: date | None
+    points: list[AnalyticsPoint]
+    suggestions: list[str]

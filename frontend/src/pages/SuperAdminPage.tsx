@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { Navbar } from '../components/Navbar';
 import { api } from '../lib/api';
@@ -27,8 +27,8 @@ export default function SuperAdminPage() {
   return (
     <div>
       <Navbar />
-      <div className="md:pl-64">
-      <main className="mx-auto max-w-6xl px-4 py-8">
+      <div className="md:pl-0">
+      <main className="main-with-sidebar">
         <h1 className="mb-4 text-3xl font-bold">SuperAdmin Console</h1>
         <div className="mb-4 grid grid-cols-1 gap-3 md:grid-cols-3">
           <div className="rounded bg-white p-4 shadow-card">Tenants: {metrics.tenants}</div>
@@ -44,3 +44,5 @@ export default function SuperAdminPage() {
     </div>
   );
 }
+
+

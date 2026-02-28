@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
 import { Navbar } from '../components/Navbar';
 import { ProgressRing } from '../components/ProgressRing';
 import { StatCard } from '../components/StatCard';
 import { api } from '../lib/api';
-import type { PerformanceAnalysisRequest, PerformanceAnalysisResponse } from '../types';
+import type { AICoachSuggestion, PerformanceAnalysisRequest, PerformanceAnalysisResponse } from '../types';
 
 const SAMPLE_ENTRY = `Breakfast: 2 eggs, oats with milk and 1 banana.
 Lunch: 200g chicken breast, 1 cup rice and salad.
@@ -22,8 +22,22 @@ export default function AIPerformancePage() {
     save_to_daily_log: false,
   });
   const [report, setReport] = useState<PerformanceAnalysisResponse | null>(null);
+  const [ingredientText, setIngredientText] = useState('');
+  const [ingredientSuggestion, setIngredientSuggestion] = useState<AICoachSuggestion | null>(null);
+  const [dailySuggestion, setDailySuggestion] = useState<AICoachSuggestion | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    void (async () => {
+      try {
+        const res = await api.get<AICoachSuggestion>('/tracking/ai-coach/daily-suggestions');
+        setDailySuggestion(res.data);
+      } catch {
+        setDailySuggestion(null);
+      }
+    })();
+  }, []);
 
   const intensityTone = useMemo(() => {
     const intensity = report?.workout_report.intensity;
@@ -58,11 +72,18 @@ export default function AIPerformancePage() {
     }
   };
 
+  const getIngredientSuggestions = async () => {
+    const ingredients = ingredientText.split(',').map((x) => x.trim()).filter(Boolean);
+    if (!ingredients.length) return;
+    const res = await api.post<AICoachSuggestion>('/tracking/ai-coach/ingredient-suggestions', { ingredients });
+    setIngredientSuggestion(res.data);
+  };
+
   return (
     <div>
       <Navbar />
-      <div className="md:pl-64">
-      <main className="w-full px-4 py-6 lg:px-8">
+      <div className="md:pl-0">
+      <main className="main-with-sidebar">
         <section className="panel-hero mb-6">
           <p className="chip mb-3">Max Rep AI Coach</p>
           <h1 className="text-3xl font-black text-slate-900 md:text-4xl">AI Nutrition and Workout Performance Engine</h1>
@@ -136,6 +157,33 @@ export default function AIPerformancePage() {
               {error ? <p className="rounded-xl bg-rose-50 px-3 py-2 text-xs text-rose-700">{error}</p> : null}
             </div>
           </form>
+        </section>
+
+        <section className="panel mb-6">
+          <h2 className="text-xl font-black text-slate-900">Ingredient-based meal suggestions</h2>
+          <p className="mt-1 text-sm text-slate-600">Example: rice, eggs, paneer</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <input className="input-field max-w-lg" value={ingredientText} onChange={(e) => setIngredientText(e.target.value)} placeholder="Enter ingredients comma separated" />
+            <button className="btn-secondary" onClick={() => void getIngredientSuggestions()}>Suggest Meals</button>
+          </div>
+          {ingredientSuggestion ? (
+            <div className="mt-3 rounded-xl bg-slate-50 p-3 text-sm">
+              <p className="font-semibold">{ingredientSuggestion.title}</p>
+              <p className="mt-1 text-slate-700">{ingredientSuggestion.personalized_message}</p>
+              <ul className="mt-2 space-y-1">
+                {ingredientSuggestion.suggestions.map((item) => <li key={item}>- {item}</li>)}
+              </ul>
+            </div>
+          ) : null}
+          {dailySuggestion ? (
+            <div className="mt-3 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-800">
+              <p className="font-semibold">{dailySuggestion.title}</p>
+              <p className="mt-1">{dailySuggestion.personalized_message}</p>
+              <ul className="mt-2 space-y-1">
+                {dailySuggestion.suggestions.map((item) => <li key={item}>- {item}</li>)}
+              </ul>
+            </div>
+          ) : null}
         </section>
 
         {report ? (
@@ -314,3 +362,5 @@ export default function AIPerformancePage() {
     </div>
   );
 }
+
+

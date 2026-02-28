@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { Navbar } from '../components/Navbar';
 import { SaveStatus } from '../components/SaveStatus';
@@ -36,8 +36,8 @@ export default function ProfilePage() {
   return (
     <div>
       <Navbar />
-      <div className="md:pl-64">
-      <main className="mx-auto max-w-xl px-4 py-8">
+      <div className="md:pl-0">
+      <main className="main-with-sidebar">
         <h1 className="mb-2 text-2xl font-black">Profile Management</h1>
         <p className="mb-4 text-xs text-slate-500">{dirty ? 'You have unsaved changes.' : 'All changes saved.'}</p>
         <form className="panel space-y-3" onSubmit={submit}>
@@ -55,3 +55,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+

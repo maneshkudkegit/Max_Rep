@@ -5,6 +5,7 @@ from sqlalchemy import select
 from app.core.config import settings
 from app.core.db import SessionLocal
 from app.core.security import get_password_hash
+from app.models.auth_session import AuthSession  # noqa: F401
 from app.models.membership import Membership, MembershipRole
 from app.models.subscription import Subscription, SubscriptionStatus, SubscriptionTier
 from app.models.tenant import Tenant

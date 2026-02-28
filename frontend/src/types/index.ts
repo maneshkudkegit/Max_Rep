@@ -6,6 +6,7 @@ export interface AuthUser {
   tenant_slug: string;
   role: 'superadmin' | 'gym_admin' | 'trainer' | 'member';
   tier: 'free' | 'pro' | 'premium';
+  profile_completion_tips: string[];
 }
 
 export interface Plan {
@@ -35,6 +36,11 @@ export interface TrackingSummary {
   workout_completed: boolean;
   consistency_score: number;
   streak_count: number;
+  protein_g: number;
+  carbs_g: number;
+  fats_g: number;
+  last_updated_at: string | null;
+  last_recorded_date: string | null;
 }
 
 export interface AnalyticsPoint {
@@ -42,6 +48,11 @@ export interface AnalyticsPoint {
   consistency_score: number;
   calories_consumed: number;
   water_ml: number;
+  protein_g: number;
+  carbs_g: number;
+  fats_g: number;
+  workout_minutes: number;
+  workout_entries: number;
 }
 
 export interface Notification {
@@ -161,4 +172,74 @@ export interface PerformanceAnalysisResponse {
   workout_report: WorkoutPerformanceReport;
   hydration_report: HydrationReport;
   dashboard: DailyPerformanceDashboard;
+}
+
+export interface CustomFoodItem {
+  id: number;
+  name: string;
+  unit: string;
+  calories_per_unit: number;
+  protein_per_unit: number;
+  carbs_per_unit: number;
+  fats_per_unit: number;
+  created_at: string;
+}
+
+export interface MealLogItem {
+  id: number;
+  date: string;
+  meal_type: string;
+  food_name: string;
+  quantity: number;
+  unit: string;
+  calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fats_g: number;
+  source: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WorkoutLogItem {
+  id: number;
+  date: string;
+  category: string;
+  name: string;
+  sets: number | null;
+  reps: number | null;
+  duration_minutes: number | null;
+  calories_burned_kcal: number;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProfileData {
+  id: number;
+  full_name: string;
+  email: string;
+  age: number;
+  gender: string;
+  height_cm: number;
+  weight_kg: number;
+  photo_url: string | null;
+  weekday_sleep_hours: number | null;
+  weekend_sleep_hours: number | null;
+  last_login_at: string | null;
+  profile_completion_tips: string[];
+}
+
+export interface AICoachSuggestion {
+  title: string;
+  suggestions: string[];
+  personalized_message: string;
+}
+
+export interface AdvancedAnalysis {
+  period: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  last_updated_at: string | null;
+  last_recorded_date: string | null;
+  points: AnalyticsPoint[];
+  suggestions: string[];
 }

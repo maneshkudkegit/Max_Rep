@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { AnalyticsChart } from '../components/AnalyticsChart';
@@ -6,36 +6,54 @@ import { Navbar } from '../components/Navbar';
 import { ProgressRing } from '../components/ProgressRing';
 import { StatCard } from '../components/StatCard';
 import { api } from '../lib/api';
+import { useAppSelector } from '../store/hooks';
 import type { AnalyticsPoint, Notification, Plan, TrackingSummary } from '../types';
 
 export default function DashboardPage() {
+  const user = useAppSelector((s) => s.auth.user);
   const [plan, setPlan] = useState<Plan | null>(null);
   const [summary, setSummary] = useState<TrackingSummary | null>(null);
-  const [weekly, setWeekly] = useState<AnalyticsPoint[]>([]);
+  const [series, setSeries] = useState<AnalyticsPoint[]>([]);
   const [notifs, setNotifs] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('weekly');
+
+  const loadDashboard = async () => {
+    const [p, s, a, n] = await Promise.all([
+      api.get('/plan/today'),
+      api.get('/tracking/summary'),
+      api.get(`/tracking/analytics?period=${period}`),
+      api.get('/tracking/notifications'),
+    ]);
+    setPlan(p.data);
+    setSummary(s.data);
+    setSeries(a.data);
+    setNotifs(n.data);
+    setLoading(false);
+  };
 
   useEffect(() => {
     void (async () => {
-      const [p, s, w, n] = await Promise.all([
-        api.get('/plan/today'),
-        api.get('/tracking/summary'),
-        api.get('/tracking/analytics/weekly'),
-        api.get('/tracking/notifications'),
-      ]);
-      setPlan(p.data);
-      setSummary(s.data);
-      setWeekly(w.data);
-      setNotifs(n.data);
-      setLoading(false);
+      await loadDashboard();
     })();
-  }, []);
+    const onTrackingUpdate = () => {
+      void loadDashboard();
+    };
+    window.addEventListener('maxrep-tracking-updated', onTrackingUpdate);
+    const timer = window.setInterval(() => {
+      void loadDashboard();
+    }, 30000);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('maxrep-tracking-updated', onTrackingUpdate);
+    };
+  }, [period]);
 
   return (
     <div>
       <Navbar />
-      <div className="md:pl-64">
-        <main className="w-full px-4 py-6 lg:px-8">
+      <div className="md:pl-0">
+        <main className="main-with-sidebar">
           <section className="panel-hero mb-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -44,12 +62,29 @@ export default function DashboardPage() {
               <p className="mt-2 max-w-2xl text-sm text-slate-600">
                 Track your nutrition, workout, hydration, and consistency in one place. Use the AI coach for automatic daily analysis.
               </p>
+              <p className="mt-2 text-xs text-slate-500">
+                Last updated: {summary?.last_updated_at ? new Date(summary.last_updated_at).toLocaleString() : 'No update yet'}
+                {' | '}
+                Last recorded date: {summary?.last_recorded_date ?? 'No records'}
+              </p>
             </div>
             <Link to="/ai-performance" className="btn-primary">
               Open AI Coach
             </Link>
           </div>
         </section>
+
+          {user?.profile_completion_tips?.length ? (
+            <section className="panel mb-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-lg font-black">Finish your Settings</h2>
+                  <p className="text-sm text-slate-600">Complete profile for better personalized recommendations.</p>
+                </div>
+                <Link to="/settings" className="btn-secondary">Open Settings</Link>
+              </div>
+            </section>
+          ) : null}
 
           {loading ? <div className="panel text-sm text-slate-500">Loading dashboard metrics...</div> : null}
 
@@ -68,7 +103,16 @@ export default function DashboardPage() {
           </div>
 
           <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <AnalyticsChart data={weekly} title="Weekly Trend Snapshot" />
+            <div>
+              <div className="mb-2 flex gap-2">
+                {(['daily', 'weekly', 'monthly', 'yearly'] as const).map((p) => (
+                  <button key={p} className={`rounded px-3 py-1 text-xs ${period === p ? 'bg-slate-900 text-white' : 'bg-slate-200 text-slate-700'}`} onClick={() => setPeriod(p)}>
+                    {p}
+                  </button>
+                ))}
+              </div>
+              <AnalyticsChart data={series} title={`${period[0].toUpperCase()}${period.slice(1)} Trend Snapshot`} />
+            </div>
             <div className="panel">
               <h2 className="text-lg font-black text-slate-900">Roadmap and Alerts</h2>
               <p className="mt-2 text-sm text-slate-700">{plan?.roadmap}</p>
@@ -90,3 +134,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+
